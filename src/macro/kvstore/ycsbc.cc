@@ -117,8 +117,9 @@ int StatusThread(string dbname, ycsbc::DB *db, double interval,
   }
 }
 
+utils::Properties props;
+
 int main(const int argc, const char *argv[]) {
-  utils::Properties props;
   string file_name = ParseCommandLine(argc, argv, props);
 
   ycsbc::DB *db = ycsbc::DBFactory::CreateDB(props);
@@ -227,6 +228,9 @@ string ParseCommandLine(int argc, const char *argv[],
       }
       input.close();
       argindex++;
+    } else if (strcmp(argv[argindex], "-debug") == 0) {
+      props.SetProperty("debug", "true");
+      argindex++;
     } else {
       cout << "Unknown option '" << argv[argindex] << "'" << endl;
       exit(0);
@@ -256,6 +260,7 @@ void UsageMessage(const char *command) {
           "files can" << endl;
   cout << "                   be specified, and will be processed in the order "
           "specified" << endl;
+  cout << "  -debug: output jsonrpc request" << endl;
 }
 
 inline bool StrStartWith(const char *str, const char *pre) {

@@ -10,8 +10,7 @@ namespace ycsbc {
 
 EVMDB::EVMDB(const string &endpoint, const string &dbname,
              const string &wl_name, unsigned deploy_wait_sec)
-    : endpoint_(endpoint),
-      evmtype_(dbname == "ethereum" ? EVMType::Ethereum : EVMType::Parity) {
+    : endpoint_(endpoint) {
   if (wl_name == "ycsb") {
     sctype_ = BBUtils::SmartContractType::KVStore;
   } else if (wl_name == "smallbank") {
@@ -20,7 +19,7 @@ EVMDB::EVMDB(const string &endpoint, const string &dbname,
     sctype_ = BBUtils::SmartContractType::DoNothing;
   }
   from_address_ = get_from_address(endpoint_);
-  if (evmtype_ == EVMType::Parity) unlock_address(endpoint_, from_address_);
+  unlock_address(endpoint_, from_address_);
   auto receipt = deploy_smart_contract(endpoint_, from_address_, sctype_);
   std::this_thread::sleep_for(std::chrono::seconds(deploy_wait_sec));
   to_address_ = lookup_smart_contract_address_or_die(endpoint_, receipt);
@@ -33,7 +32,7 @@ EVMDB::EVMDB(const string &endpoint, const string &dbname,
 /// read value indicated by a key
 int EVMDB::Read(const string &table, const string &key,
                 const vector<string> *fields, vector<KVPair> &result) {
-  if (evmtype_ == EVMType::Parity) unlock_address(endpoint_, from_address_);
+  unlock_address(endpoint_, from_address_);
   double start_time = utils::time_now();
   std::string txn_hash =
       (sctype_ == BBUtils::SmartContractType::DoNothing)
@@ -53,7 +52,7 @@ int EVMDB::Update(const string &table, const string &key,
   for (auto v : values) {
     val += v.first + "=" + v.second + " ";
   }
-  if (evmtype_ == EVMType::Parity) unlock_address(endpoint_, from_address_);
+  unlock_address(endpoint_, from_address_);
 
   double start_time = utils::time_now();
   std::string txn_hash =
