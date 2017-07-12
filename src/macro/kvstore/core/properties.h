@@ -63,3 +63,8 @@ inline const std::map<std::string, std::string> &Properties::properties() const 
 } // utils
 
 #endif // YCSB_C_PROPERTIES_H_
+
+#ifndef YCSB_C_GLOB_PROPERTIES_H_
+#define YCSB_C_GLOB_PROPERTIES_H_
+extern utils::Properties props;
+#endif

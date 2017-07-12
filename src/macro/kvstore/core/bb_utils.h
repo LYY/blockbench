@@ -7,6 +7,7 @@
 #include <sstream>
 #include <restclient-cpp/restclient.h>
 
+#include "properties.h"
 #include <iostream>
 using namespace std;
 
@@ -93,7 +94,9 @@ inline std::string left_padding_string(const std::string &str) {
 inline std::string send_jsonrpc_request(const std::string &endpoint,
                                         const std::string &request_header,
                                         const std::string &request_data) {
-  cout << "jsonrpc body: " << request_data << endl;
+  if (props.GetProperty("debug") == "true") {
+    cout << "jsonrpc body: " << request_data << endl;
+  }
   return RestClient::post(endpoint, request_header, request_data).body;
 }
 
